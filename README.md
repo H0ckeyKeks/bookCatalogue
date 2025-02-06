@@ -4,8 +4,11 @@ A simple console based book catalogue application built in **C#**, allowing user
 
 ## Features
 **Add Books** - Store books in the database
+
 **View Books** - Display a book
+
 **Delete Books** - Remove books from the database (catalogue)
+
 **Rate Books** - Give books a rating from 0 - 5 points per category (there are 7 different categories)
 
 ## Technologies used
