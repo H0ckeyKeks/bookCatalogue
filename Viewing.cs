@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Npgsql;
+using ConsoleTableExt;
 
 namespace BookCatalogue
 {
@@ -58,22 +59,50 @@ namespace BookCatalogue
                         // Use parameters to prevent SQL injection
                         cmd.Parameters.AddWithValue("searchTerm", $"%{searchTerm.ToLower()}%");
 
+                        // Initializing table data and summary storage
+                        var tableData = new List<List<object>>();
+                        var summaries = new Dictionary<int, string>();
+
                         using (var reader = cmd.ExecuteReader())
                         {
+                            
                             // Read and print each row
                             while (reader.Read())
                             {
                                 int bookId = int.Parse(reader["Id"].ToString());
                                 bookIds.Add(bookId);
 
-                                Console.WriteLine($"Book ID: {reader["Id"]}");
-                                Console.WriteLine($"Title: {reader["Title"]}");
-                                Console.WriteLine($"Publisher: {reader["Publisher"]}");
-                                Console.WriteLine($"Summary: {reader["Summary"]}");
-                                Console.WriteLine($"Author: {reader["Firstname"]} {reader["Lastname"]}");
-                                Console.WriteLine($"Rating: {reader["Rating"]}");
-                                Console.WriteLine("----------------------------------------");
+                                // Add a row for each book
+                                tableData.Add(new List<object>
+                                {
+                                    reader["Id"],
+                                    reader["Title"],
+                                    $"{reader["Firstname"]} {reader["Lastname"]}",
+                                    reader["Pages"],
+                                    reader["Publisher"],
+                                    reader["Isbn"],
+                                    reader["Rating"]
+                                });
+
+                                // Storing summaries separately
+                                summaries[bookId] = reader["Summary"].ToString();
                             }
+                            
+                        }
+
+                        // Definition and display of the table(without summaries)
+                        var columnHeaders = new List<string> { "Book ID", "Title", "Author", "Pages", "Publisher", "ISBN", "Rating" };
+                        ConsoleTableBuilder
+                            .From(tableData)
+                            .WithColumn(columnHeaders)
+                            .WithFormat(ConsoleTableBuilderFormat.Alternative)
+                            .ExportAndWriteLine();
+
+                        // Printing summaries separately
+                        Console.WriteLine("\nBook Summaries:");
+                        foreach (var (bookId, summary) in summaries)
+                        {
+                            Console.WriteLine($"\nBook ID: {bookId}\nSummary: {summary}");
                         }
                     }
                 }
