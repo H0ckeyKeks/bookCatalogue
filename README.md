@@ -15,6 +15,7 @@ A simple console based book catalogue application built in **C#**, allowing user
 - C# (.NET 8)
 - SQL Server (PostgreSQL) -> for database storage
 - Npgsql (PostgreSQL .NET data provider) -> for database operations
+- ConsoleTableExt -> for table format in a console application
 - Environment variables -> for secure database credentials
 
 ## Security
